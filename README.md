@@ -15,7 +15,7 @@ HabitLoop is a Flask + SQLite habit-tracking web app.
    ```
 4. Visit http://127.0.0.1:5000
 
-The app creates/updates `habitloop.db` automatically. The default admin login is `admin@habitloop.com` / `admin123`; change this before using the app beyond a local college demo.
+The app creates/updates `habitloop.db` automatically when it runs for the first time.
 
 ## What's improved
 - SQLite connection timeout and busy timeout to reduce transient `database is locked` errors.
