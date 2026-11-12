@@ -100,14 +100,6 @@ def init_db():
         );
     """)
 
-    # Create default Admin if not exists
-    cursor.execute("SELECT * FROM User WHERE email = ?", ("admin@habitloop.com",))
-    if not cursor.fetchone():
-        hashed_pwd = generate_password_hash("admin123")
-        cursor.execute(
-            "INSERT INTO User (name, email, password, is_admin) VALUES (?, ?, ?, 1)",
-            ("System Admin", "admin@habitloop.com", hashed_pwd)
-        )
     conn.commit()
     conn.close()
 
