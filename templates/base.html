@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}HabitLoop - Build Better Routines{% endblock %}</title>
+    <!-- Tailwind CSS CDN & Inter Font -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { 50: '#eef2ff', 100: '#e0e7ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between pb-16 md:pb-0">
+
+    <!-- Top Navigation -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <a href="{{ url_for('dashboard') }}" class="flex items-center gap-2 text-indigo-400 font-bold text-lg tracking-tight">
+                <i data-lucide="repeat" class="w-6 h-6"></i>
+                <span class="text-white">Habit<span class="text-indigo-400">Loop</span></span>
+            </a>
+
+            <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
+                {% if session.get('user_id') %}
+                    {% if session.get('is_admin') %}
+                        <a href="{{ url_for('admin_dashboard') }}" class="text-amber-400 hover:text-amber-300 flex items-center gap-1.5 transition">
+                            <i data-lucide="shield" class="w-4 h-4"></i> Admin
+                        </a>
+                    {% endif %}
+                    <a href="{{ url_for('dashboard') }}" class="text-slate-300 hover:text-white flex items-center gap-1.5 transition">
+                        <i data-lucide="layout-grid" class="w-4 h-4"></i> Dashboard
+                    </a>
+                    <a href="{{ url_for('progress') }}" class="text-slate-300 hover:text-white flex items-center gap-1.5 transition">
+                        <i data-lucide="bar-chart-2" class="w-4 h-4"></i> Analytics
+                    </a>
+                    <div class="h-4 w-px bg-slate-800"></div>
+                    <span class="text-xs text-slate-400">{{ session.get('name') }}</span>
+                    <a href="{{ url_for('logout') }}" class="text-rose-400 hover:text-rose-300 text-xs px-3 py-1.5 rounded-lg border border-rose-500/20 hover:bg-rose-500/10 transition">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="text-slate-300 hover:text-white transition">Sign In</a>
+                    <a href="{{ url_for('register') }}" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm transition shadow-sm shadow-indigo-500/20">Get Started</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <!-- Flash Messages Container -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-6 w-full flex-1">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="space-y-3 mb-6">
+                {% for category, message in messages %}
+                    <div class="flex items-center justify-between p-4 rounded-xl border text-sm font-medium
+                        {% if category == 'danger' %} bg-rose-950/40 border-rose-800/50 text-rose-300
+                        {% elif category == 'success' %} bg-emerald-950/40 border-emerald-800/50 text-emerald-300
+                        {% elif category == 'warning' %} bg-amber-950/40 border-amber-800/50 text-amber-300
+                        {% else %} bg-indigo-950/40 border-indigo-800/50 text-indigo-300 {% endif %}">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="info" class="w-4 h-4"></i>
+                            <span>{{ message }}</span>
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Mobile Bottom Navigation Bar (Phone layout) -->
+    {% if session.get('user_id') %}
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 border-t border-slate-800 bg-slate-900/95 backdrop-blur z-50 px-6 py-2 flex justify-around">
+        <a href="{{ url_for('dashboard') }}" class="flex flex-col items-center gap-1 text-slate-400 hover:text-indigo-400 text-xs">
+            <i data-lucide="layout-grid" class="w-5 h-5"></i>
+            <span>Today</span>
+        </a>
+        <a href="{{ url_for('create_habit') }}" class="flex flex-col items-center gap-1 text-indigo-400 text-xs -mt-5">
+            <div class="bg-indigo-600 p-2.5 rounded-full text-white shadow-lg shadow-indigo-600/30">
+                <i data-lucide="plus" class="w-5 h-5"></i>
+            </div>
+            <span>New</span>
+        </a>
+        <a href="{{ url_for('progress') }}" class="flex flex-col items-center gap-1 text-slate-400 hover:text-indigo-400 text-xs">
+            <i data-lucide="bar-chart-2" class="w-5 h-5"></i>
+            <span>Stats</span>
+        </a>
+    </nav>
+    {% endif %}
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

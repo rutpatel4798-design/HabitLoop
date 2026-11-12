@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}New Habit | HabitLoop{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto">
+    <div class="mb-6">
+        <a href="{{ url_for('dashboard') }}" class="text-xs font-medium text-slate-400 hover:text-slate-200 inline-flex items-center gap-1 mb-2">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Back to Dashboard
+        </a>
+        <h1 class="text-2xl font-bold text-white">Create a New Habit</h1>
+        <p class="text-xs text-slate-400 mt-1">Consistency begins with small, repeatable actions.</p>
+    </div>
+
+    <!-- Quick Presets -->
+    <div class="mb-6">
+        <p class="text-xs font-medium text-slate-400 mb-2">Quick Presets:</p>
+        <div class="flex flex-wrap gap-2">
+            <button type="button" onclick="setPreset('Drink 2L Water', 'Stay hydrated throughout the day', '08:00')" class="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300">💧 Hydration</button>
+            <button type="button" onclick="setPreset('30 Min Workout', 'Gym, run, or bodyweight circuit', '07:00')" class="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300">💪 Fitness</button>
+            <button type="button" onclick="setPreset('Read 15 Pages', 'Fiction or personal development', '21:30')" class="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300">📚 Reading</button>
+            <button type="button" onclick="setPreset('10 Mins Meditation', 'Breathing exercises for calm focus', '06:30')" class="text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300">🧘 Meditation</button>
+        </div>
+    </div>
+
+    <form method="POST" class="glass-card rounded-2xl p-6 space-y-5 border border-slate-800">
+        <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1.5">Habit Title</label>
+            <input type="text" id="habit_title" name="title" required placeholder="e.g., Morning Jog" 
+                   class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+        </div>
+
+        <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1.5">Description (Optional)</label>
+            <textarea id="habit_desc" name="description" rows="2" placeholder="Why do you want to keep this habit?" 
+                      class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1.5">Frequency</label>
+                <select name="frequency" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <option value="Daily">Daily</option>
+                    <option value="Weekly">Weekly</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1.5">Daily Reminder Time</label>
+                <input type="time" id="habit_time" name="reminder_time" value="08:00" 
+                       class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+        </div>
+
+        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-3 rounded-xl text-sm transition shadow-lg shadow-indigo-600/20">
+            Save Habit
+        </button>
+    </form>
+</div>
+
+<script>
+function setPreset(title, desc, time) {
+    document.getElementById('habit_title').value = title;
+    document.getElementById('habit_desc').value = desc;
+    document.getElementById('habit_time').value = time;
+}
+</script>
+{% endblock %}

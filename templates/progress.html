@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% block title %}Habit Analytics | HabitLoop{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <div>
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">Analytics & Performance</h1>
+        <p class="text-sm text-slate-400 mt-1">Track trends and spot consistency patterns across your routine.</p>
+    </div>
+
+    <!-- Chart Container -->
+    <div class="glass-card rounded-2xl p-6 border border-slate-800">
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <h3 class="font-semibold text-white text-base">Weekly Activity</h3>
+                <p class="text-xs text-slate-400">Total habits completed each day over the past week</p>
+            </div>
+            <span class="text-xs font-medium px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 rounded-lg">Last 7 Days</span>
+        </div>
+        <div class="h-64">
+            <canvas id="progressChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Habit Stats Table -->
+    <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
+        <div class="p-5 border-b border-slate-800">
+            <h3 class="font-semibold text-white text-base">Habits Breakdown</h3>
+            <p class="text-xs text-slate-400">Current streaks, records, and completion counts</p>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-300">
+                <thead class="bg-slate-900/50 text-xs uppercase font-semibold text-slate-400 border-b border-slate-800">
+                    <tr>
+                        <th class="px-5 py-3.5">Habit</th>
+                        <th class="px-5 py-3.5">Cadence</th>
+                        <th class="px-5 py-3.5">Current Streak</th>
+                        <th class="px-5 py-3.5">Longest Record</th>
+                        <th class="px-5 py-3.5">Total Check-ins</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60 font-medium">
+                    {% for s in habit_stats %}
+                    <tr class="hover:bg-slate-800/30 transition">
+                        <td class="px-5 py-4 text-white font-semibold">{{ s.title }}</td>
+                        <td class="px-5 py-4">
+                            <span class="text-xs px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">{{ s.frequency }}</span>
+                        </td>
+                        <td class="px-5 py-4 text-amber-400">🔥 {{ s.current_streak }} days</td>
+                        <td class="px-5 py-4 text-indigo-400">⭐ {{ s.longest_streak }} days</td>
+                        <td class="px-5 py-4 text-emerald-400">{{ s.total_completed }} times</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="px-5 py-8 text-center text-slate-500">No data logged yet. Complete habits from the dashboard to populate metrics.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+const ctx = document.getElementById('progressChart').getContext('2d');
+const gradient = ctx.createLinearGradient(0, 0, 0, 250);
+gradient.addColorStop(0, 'rgba(99, 102, 241, 0.4)');
+gradient.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
+
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: {{ labels|tojson }},
+        datasets: [{
+            label: 'Habits Completed',
+            data: {{ counts|tojson }},
+            borderColor: '#6366f1',
+            borderWidth: 2.5,
+            pointBackgroundColor: '#818cf8',
+            pointRadius: 4,
+            fill: true,
+            backgroundColor: gradient,
+            tension: 0.35
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                ticks: { color: '#94a3b8', stepSize: 1 }
+            },
+            x: {
+                grid: { display: false },
+                ticks: { color: '#94a3b8' }
+            }
+        }
+    }
+});
+</script>
+{% endblock %}
